@@ -5,11 +5,14 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestTemplate;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
 import monprojet.entity.*;
+import monprojet.dto.*;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -42,5 +45,56 @@ public class CountryRepositoryTest {
         long nombre = countryDAO.count();
         assertEquals(combienDePaysDansLeJeuDeTest, nombre, "On doit trouver 4 pays" );
     }
+    @Test
+    void onSaitCalulerLaPopTotale(){
+        int A=countryDAO.Poptotale(1);
+        assertEquals(A,12);
+    }
 
+
+    @Test
+    @Sql("test-data.sql")
+    void testPopPourTousLesPays(){
+        PopPays testFr = new PopPays() {
+            @Override
+            public String getNom() {
+                return "France";
+            }
+
+            @Override
+            public Integer getPop() {
+                return 12;
+            }
+        };
+        PopPays testUk = new PopPays() {
+            @Override
+            public String getNom() {
+                return "United Kingdom";
+            }
+
+            @Override
+            public Integer getPop() {
+                return 18;
+            }
+        };
+        PopPays testUs = new PopPays() {
+            @Override
+            public String getNom() {
+                return "United States of America";
+            }
+
+            @Override
+            public Integer getPop() {
+                return 27;
+            }
+        };
+        assertEquals(testFr.getNom(), countryDAO.listPopPays().get(0).getNom());
+        assertEquals(testFr.getPop(), countryDAO.listPopPays().get(0).getPop());
+
+        assertEquals(testUk.getNom(), countryDAO.listPopPays().get(1).getNom());
+        assertEquals(testUk.getPop(), countryDAO.listPopPays().get(1).getPop());
+
+        assertEquals(testUs.getNom(), countryDAO.listPopPays().get(2).getNom());
+        assertEquals(testUs.getPop(), countryDAO.listPopPays().get(2).getPop());
+    }
 }
